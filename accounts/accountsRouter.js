@@ -4,15 +4,15 @@ const router = express.Router();
 
 // CREATE account
 router.post('/', async (req, res) => {
-  const accountData = req.body;
+  const request = req.body;
 
   try {
-    if (!accountData.name || !accountData.budget) {
+    if (!request.name || !request.budget) {
       res.status(400).json({ error: "Please fill out all required fields" });
     }
     else {
-      const account = await db('accounts').insert(accountData);
-      res.status(201).json({ message: `The account for ${accountData.name} has been created`, id: account });
+      const account = await db('accounts').insert(request);
+      res.status(201).json({ message: `The account for ${request.name} has been created`, id: account });
     }
   } catch (error) {
       res.status(500).json({ error: "Error creating account", reason: error.message });
