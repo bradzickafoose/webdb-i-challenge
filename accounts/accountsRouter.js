@@ -62,7 +62,7 @@ router.delete('/:id', async (req, res) => {
   }
 })
 
-// MIDDLEWARE: Validate request body conditions
+// MIDDLEWARE: Validate request body contains required conditions are met
 function validateBody(req, res, next) {
   const account = req.body;
 
