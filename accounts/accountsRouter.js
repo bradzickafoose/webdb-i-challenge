@@ -64,18 +64,18 @@ router.delete('/:id', async (req, res) => {
 
 // MIDDLEWARE: Validates the required conditions (name and budget) are met
 function validateBody(req, res, next) {
-  const account = req.body;
+  const { name, budget } = req.body;
 
   // Check the required account name and budget is in the request body
-  if (!account.name && !account.budget) {
+  if (!name && !budget) {
     res.status(400).json({ message: "Please include an account name and budget." })
   }
   // Check the required account name is in request body
-  else if (!account.name) {
+  else if (!name) {
     res.status(400).json({ message: "Please include account name." });
   }
   // Check if the required account budget is in request body
-  else if (!account.budget) {
+  else if (!budget) {
     res.status(400).json({ message: "Please include account budget."})
   }
   // All checks pass, continue
