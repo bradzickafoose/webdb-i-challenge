@@ -4,11 +4,19 @@ const accountsRouter = require('./accounts/accountsRouter');
 
 const server = express();
 
-server.get('/', (req, res) => {
-    res.send('<h1>Bring out your dead.</h1>');
-})
-
 server.use(express.json());
 server.use('/api/accounts', accountsRouter)
+
+server.get('/', (req, res) => {
+  res.status(200).json({ message: "API is online" })
+})
+
+function errorHandler(error, req, res) {
+  const code = error.status || error.statusCode || 500;
+
+  res.status(code).json(error);
+}
+
+server.use(errorHandler);
 
 module.exports = server;
