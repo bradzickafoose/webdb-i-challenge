@@ -4,14 +4,14 @@ const router = express.Router();
 
 // CREATE account
 router.post('/', validateBody, async (req, res) => {
-  const request = req.body;
+  const account = req.body;
 
   try {
-    const account = await db('accounts').insert(request);
-    res.status(201).json({ message: `The account for ${request.name} has been created`, id: account });
+    await db('accounts').insert(account);
+    res.status(201).json({ message: `An account for ${account.name} has been created.`, account });
   }
   catch (error) {
-    res.status(500).json({ error: "Error creating account", reason: error.message });
+    res.status(500).json({ message: "Error creating account.", reason: error.message });
   }
 })
 
@@ -22,7 +22,7 @@ router.get('/', async (req, res) => {
     res.status(200).json(accounts);
   }
   catch (error) {
-    res.status(500).json({ error: "Error retrieving accounts", reason: error.message });
+    res.status(500).json({ message: "Error retrieving accounts.", reason: error.message });
   }
 })
 
@@ -33,21 +33,21 @@ router.get('/:id', async (req, res) => {
     res.status(200).json(account);
   }
   catch (error) {
-    res.status(500).json({ error: "Error retrieving account by ID", reason: error.message });
+    res.status(500).json({ message: "Error retrieving account by ID.", reason: error.message });
   }
 })
 
 // UPDATE account by ID
 router.put('/:id', async (req, res) => {
   const id = Number(req.params.id);
-  const request = req.body;
+  const account = req.body;
 
   try {
-    await db('accounts').where({ id: req.params.id }).update(request);
-    res.status(200).json({ message: `The account for ${request.name} has been updated`, id, request });
+    await db('accounts').where({ id }).update(account);
+    res.status(200).json({ message: `The account for ${account.name} has been updated.`, id, account });
   }
   catch (error) {
-    res.status(500).json({ message: "Error updating account", reason: error.message });
+    res.status(500).json({ message: "Error updating account.", reason: error.message });
   }
 })
 
@@ -55,22 +55,30 @@ router.put('/:id', async (req, res) => {
 router.delete('/:id', async (req, res) => {
   try {
     const account = await db('accounts').where({ id: req.params.id }).del();
-    res.status(200).json({ message: "Account deleted", id: account });
+    res.status(200).json({ message: "Account deleted.", id: account });
   }
   catch (error) {
-    res.status(500).json({ message: "Error deleting account", reason: error.message });
+    res.status(500).json({ message: "Error deleting account.", reason: error.message });
   }
 })
 
+// MIDDLEWARE: Validate request body conditions
 function validateBody(req, res, next) {
-  const { body } = req;
+  const account = req.body;
 
-  if (typeof body === undefined) {
-    res.status(400).json({ message: "Request is undefined" });
+  // Check the required account name and budget is in the request body
+  if (!account.name && !account.budget) {
+    res.status(400).json({ message: "Please include an account name and budget." })
   }
-  else if (!body.name || !body.budget) {
-    res.status(400).json({ error: "Please fill out all required fields" });
+  // Check the required account name is in request body
+  else if (!account.name) {
+    res.status(400).json({ message: "Please include account name." });
   }
+  // Check if the required account budget is in request body
+  else if (!account.budget) {
+    res.status(400).json({ message: "Please include account budget."})
+  }
+  // All checks pass, continue
   else {
     next();
   }
