@@ -35,20 +35,18 @@ router.post('/', async (req, res) => {
       res.status(201).json({ message: "Account added", id: account });
     }
   } catch (error) {
-      res.status(500).json({ error: "Error creating account", reason: error.message })
+      res.status(500).json({ error: "Error creating account", reason: error.message });
   }
 })
 
-router.delete('/:id', (req, res) => {
-    db('accounts')
-        .where({ id: req.params.id })
-        .del()
-        .then(remove => {
-            res.status(200).json(remove)
-        })
-        .catch(err => {
-            res.status(400).json(err)
-        })
+// DELETE Account by ID
+router.delete('/:id', async (req, res) => {
+  try {
+    const account = await db('accounts').where({ id: req.params.id }).del();
+    res.status(200).json({ message: "Account deleted", id: account });
+  } catch (error) {
+    res.status(500).json({ message: "Error deleting account", reason: error.message });
+  }
 })
 
 router.put('/:id', (req, res) => {
