@@ -2,7 +2,7 @@ const express = require('express');
 const db = require('../data/dbConfig');
 const router = express.Router();
 
-// GET all accounts
+// READ all accounts
 router.get('/', async (req, res) => {
   try {
     const accounts = await db('accounts');
@@ -12,7 +12,7 @@ router.get('/', async (req, res) => {
   }
 })
 
-// GET Account by ID
+// READ Account by ID
 router.get('/:id', async (req, res) => {
   try {
     const account = await db('accounts').where({ id: req.params.id });
@@ -22,16 +22,21 @@ router.get('/:id', async (req, res) => {
   }
 })
 
-router.post('/', (req, res) => {
-    db
-        .insert(req.body, 'id')
-        .into('accounts')
-        .then(added => {
-            res.status(200).json(added)
-        })
-        .catch(err => {
-            res.status(400).json(err)
-        })
+// CREATE Account
+router.post('/', async (req, res) => {
+  const accountData = req.body;
+
+  try {
+    if (!accountData.name || !accountData.budget) {
+      res.status(400).json({ error: "Please fill out all required fields" });
+    }
+    else {
+      const account = await db('accounts').insert(accountData);
+      res.status(201).json({ message: "Account added", id: account });
+    }
+  } catch (error) {
+      res.status(500).json({ error: "Error creating account", reason: error.message })
+  }
 })
 
 router.delete('/:id', (req, res) => {
