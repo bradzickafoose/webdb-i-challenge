@@ -3,17 +3,13 @@ const db = require('../data/dbConfig');
 const router = express.Router();
 
 
-router.get('/', (req, res) => {
-    db
-        .select('*')
-        .from('accounts')
-        .then(response => {
-            res.status(200).json(response)
-        })
-        .catch(err => {
-            console.log(err);
-            res.status(500).json(err)
-        })
+router.get('/', async (req, res) => {
+  try {
+    const accounts = await db('accounts');
+    res.status(200).json(accounts);
+  } catch (error) {
+    res.status(500).json({ error: "Error retrieving accounts", reason: error.message });
+  }
 })
 
 router.get('/:id', (req, res) => {
