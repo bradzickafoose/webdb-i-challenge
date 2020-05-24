@@ -12,7 +12,7 @@ router.post('/', async (req, res) => {
     }
     else {
       const account = await db('accounts').insert(accountData);
-      res.status(201).json({ message: `The account for ${accountData.name} has been added`, id: account });
+      res.status(201).json({ message: `The account for ${accountData.name} has been created`, id: account });
     }
   } catch (error) {
       res.status(500).json({ error: "Error creating account", reason: error.message });
