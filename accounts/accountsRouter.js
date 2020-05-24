@@ -70,17 +70,14 @@ function validateBody(req, res, next) {
   if (!account.name && !account.budget) {
     res.status(400).json({ message: "Please include an account name and budget." })
   }
-
   // Check the required account name is in request body
   else if (!account.name) {
     res.status(400).json({ message: "Please include account name." });
   }
-
   // Check if the required account budget is in request body
   else if (!account.budget) {
     res.status(400).json({ message: "Please include account budget."})
   }
-
   // All checks pass, continue
   else {
     next();
