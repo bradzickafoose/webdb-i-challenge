@@ -49,18 +49,14 @@ router.delete('/:id', async (req, res) => {
   }
 })
 
-router.put('/:id', (req, res) => {
-    const postContent = req.body;
-
-    db('accounts')
-        .where({ id: req.params.id })
-        .update(postContent)
-        .then(update => {
-            res.status(200).json(update)
-        })
-        .catch(err => {
-            res.status(400).json(err)
-        })
+// UPDATE Account by ID
+router.put('/:id', async (req, res) => {
+  try {
+    const account = await db('accounts').where({ id: req.params.id }).update(req.body);
+    res.status(200).json({ message: "Account updated", id: account });
+  } catch (error) {
+    res.status(500).json({ message: "Error updating account", reason: error.message });
+  }
 })
 
 module.exports = router;
